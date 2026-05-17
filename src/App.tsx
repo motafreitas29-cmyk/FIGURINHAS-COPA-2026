@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Shield, CheckCircle, Package, Mail, Printer, Smile, Star } from 'lucide-react';
+import { Shield, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const PAYMENT_LINK = "https://pay.kirvano.com/66aad661-171a-48cf-b033-975b1910874c";
 
 function useCountdown() {
-  const [seconds, setSeconds] = useState(15 * 60);
+  const [seconds, setSeconds] = useState(10 * 60 + 13);
   useEffect(() => {
     const t = setInterval(() => setSeconds(s => s > 0 ? s - 1 : 0), 1000);
     return () => clearInterval(t);
@@ -15,110 +15,159 @@ function useCountdown() {
   return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
-const KIT_ITEMS = [
-  { title: '48 Seleções em Alta Qualidade', desc: 'Todas as seleções da Copa 2026 em PDF ultra HD prontas para imprimir' },
-  { title: 'Edição Especial Coca-Cola', desc: 'Figurinhas exclusivas da parceria oficial Coca-Cola com a Copa' },
-  { title: 'Figurinhas Douradas Exclusivas', desc: 'Figurinhas especiais douradas que todo colecionador quer ter' },
-  { title: 'Mapa de Marcação', desc: 'Álbum completo para você marcar todas as suas figurinhas' },
-  { title: 'Fornecedor de Papel Adesivo', desc: 'Lista dos melhores fornecedores para imprimir com qualidade' },
-  { title: 'Figurinhas Extras Bônus', desc: 'Pacote bônus com figurinhas surpresa exclusivas' },
+const CAROUSEL_ITEMS = [
+  { label: 'Kit Digital 48 Seleções Oficiais', img: 'https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { label: 'Edição Especial Coca Cola', img: 'https://images.pexels.com/photos/2209/food-drink-can-coca-cola.jpg?auto=compress&cs=tinysrgb&w=400' },
+  { label: 'Fornecedor de Papel', img: 'https://images.pexels.com/photos/6373305/pexels-photo-6373305.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { label: 'Figurinhas Douradas', img: 'https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { label: 'Figurinhas Extras', img: 'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg?auto=compress&cs=tinysrgb&w=400' },
+  { label: 'Mapa de Marcação', img: 'https://images.pexels.com/photos/270085/pexels-photo-270085.jpeg?auto=compress&cs=tinysrgb&w=400' },
+];
+
+const FEATURES = [
+  { icon: '📦', title: '48 Seleções Oficiais', desc: 'Pacote completo em PDF de alta qualidade com as 48 seleções da Copa de 2026.' },
+  { icon: '🖼️', title: 'Qualidade Ultra HD', desc: 'Figurinhas em altíssima resolução com cores nítidas e definição perfeita.' },
+  { icon: '🖨️', title: 'Imprima em Casa', desc: 'O acesso é tão simples que você consegue imprimir em qualquer impressora.' },
+  { icon: '✅', title: 'Sem Repetidas', desc: 'Você escolhe o que quer imprimir! Esqueça as figurinhas repetidas.' },
 ];
 
 const STEPS = [
-  { icon: Package, title: 'Realizar o Pedido', desc: 'Acesse o checkout seguro e finalize sua compra em segundos' },
-  { icon: Mail, title: 'Receber o Acesso', desc: 'Você recebe o link de acesso diretamente no seu e-mail' },
-  { icon: Printer, title: 'Imprimir em Casa', desc: 'Imprima as figurinhas em papel adesivo na sua impressora' },
-  { icon: Smile, title: 'Divertir-se!', desc: 'Recorte, cole e complete seu álbum da Copa 2026!' },
+  { n: '1', title: 'Realize o Pedido', desc: 'Complete a compra em nosso checkout 100% seguro. Acesse o Pay no Cartão.' },
+  { n: '2', title: 'Receba o Acesso', desc: 'O acesso será enviado automaticamente para o seu e-mail cadastrado.' },
+  { n: '3', title: 'Imprima em Casa', desc: 'Use papel adesivo e imprima em qualquer impressora para ter figurinhas perfeitas.' },
+  { n: '4', title: 'Divirta-se!', desc: 'Recorte, cole e divirta-se colecionando com a família e amigos.' },
 ];
 
-function CTAButton({ text = 'Garantir meu pack agora!' }: { text?: string }) {
+const KIT_LIST = [
+  'Pacote 48 seleções de 2026 (Alta Qualidade)',
+  'Bônus: Edição especial da Coca Cola',
+  'Bônus: Fornecedor de papel',
+  'Bônus: Figurinhas douradas exclusivas',
+  'Bônus: Figurinhas extras',
+  'Bônus: Mapa de Figurinhas para marcar',
+  'Sem figurinhas repetidas (economia gigante)',
+];
+
+function CTAButton({ text = 'Garantir meu pack agora!', small = false }: { text?: string; small?: boolean }) {
   return (
     <a
       href={PAYMENT_LINK}
       target="_blank"
       rel="noopener noreferrer"
-      className="block w-full bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold text-xl py-5 px-8 rounded-xl text-center transition-all duration-200 shadow-lg hover:shadow-green-300 uppercase tracking-wide"
+      className={`inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold rounded-full transition-all duration-200 shadow-lg hover:shadow-green-300 ${small ? 'py-3 px-6 text-base' : 'py-4 px-8 text-lg w-full sm:w-auto'}`}
     >
-      {text}
+      {text} <span>→</span>
     </a>
   );
 }
 
 export default function App() {
   const countdown = useCountdown();
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const visibleCount = 4;
+
+  const prev = () => setCarouselIdx(i => Math.max(0, i - 1));
+  const next = () => setCarouselIdx(i => Math.min(CAROUSEL_ITEMS.length - visibleCount, i + 1));
 
   return (
     <div className="min-h-screen bg-white text-gray-800 font-sans">
 
-      {/* BARRA DE URGÊNCIA */}
-      <div className="bg-red-600 text-white text-center py-3 px-4">
-        <p className="text-sm sm:text-base font-bold">
-          🔥 OFERTA ESPECIAL — O preço vai subir em{' '}
-          <span className="bg-white text-red-600 px-2 py-0.5 rounded font-mono font-black text-lg">{countdown}</span>
-        </p>
+      {/* TOP BAR */}
+      <div className="bg-[#1a1a2e] text-yellow-400 text-center py-2 px-4 text-sm font-semibold">
+        🔥 Oferta Especial! O preço vai subir em{' '}
+        <span className="font-mono font-black text-yellow-300">{countdown}</span>
       </div>
 
       {/* HERO */}
-      <section className="bg-gradient-to-b from-yellow-400 to-yellow-300 py-10 px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-red-600 font-bold text-sm sm:text-base mb-2 uppercase tracking-wider">⚽ Copa do Mundo 2026</p>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-4">
-            Chega de gastar fortunas com figurinhas caras, ir até a banca e correr o risco de tirar repetidas!
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-800 mb-6 font-medium">
-            Agora você imprime as figurinhas da Copa 2026 <strong>em casa</strong>, com qualidade profissional, por menos de <strong>R$10</strong>
-          </p>
-          <div className="bg-white rounded-2xl p-2 shadow-xl mb-6 max-w-lg mx-auto">
+      <section className="py-10 px-4 bg-white">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8">
+          <div className="flex-1">
+            <div className="inline-block bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full mb-4">
+              ⚽ Mais de 300 pessoas já estão imprimindo suas figurinhas em casa
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-4">
+              Pack Completo de Figurinhas da Copa 2026
+            </h1>
+            <p className="text-gray-600 text-base mb-6 leading-relaxed">
+              Chega de gastar fortunas com figurinhas caras, ir até a banca e correr o risco de tirar repetidas! Economize muito imprimindo em casa com as 48 seleções em qualidade Ultra HD.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 items-start">
+              <CTAButton />
+            </div>
+            <p className="text-sm text-gray-500 mt-3 flex items-center gap-1">
+              <span className="text-green-500">✅</span> Compra 100% segura e acesso imediato
+            </p>
+          </div>
+          <div className="flex-1 max-w-sm w-full">
             <img
-              src="https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg?auto=compress&cs=tinysrgb&w=800"
-              alt="Kit Figurinhas Copa 2026"
-              className="w-full rounded-xl object-cover max-h-72"
+              src="https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg?auto=compress&cs=tinysrgb&w=700"
+              alt="Pack Figurinhas Copa 2026"
+              className="w-full rounded-2xl shadow-xl object-cover"
             />
           </div>
-          <CTAButton />
-          <p className="text-sm text-gray-700 mt-3">✅ Acesso imediato &nbsp;|&nbsp; 🔒 Compra 100% segura</p>
         </div>
       </section>
 
-      {/* PROVA SOCIAL */}
-      <div className="bg-green-600 text-white py-3 px-4 text-center">
-        <p className="font-bold text-base sm:text-lg">⚽ Mais de <strong>300 pessoas</strong> já estão imprimindo suas figurinhas!</p>
-      </div>
-
-      {/* O QUE VOCÊ LEVA */}
-      <section className="py-14 px-4 bg-gray-50">
-        <div className="max-w-3xl mx-auto">
+      {/* CAROUSEL - O QUE VOCÊ LEVA */}
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-2">Tudo o que você leva hoje</h2>
-          <p className="text-center text-gray-500 mb-10">Tudo o que você precisa em um só lugar</p>
-          <div className="space-y-4">
-            {KIT_ITEMS.map((item, i) => (
-              <div key={i} className="flex items-start gap-4 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                <CheckCircle className="w-7 h-7 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-bold text-gray-900 text-base sm:text-lg">{item.title}</p>
-                  <p className="text-gray-500 text-sm mt-0.5">{item.desc}</p>
-                </div>
+          <p className="text-center text-gray-500 mb-8 text-sm">Deslize para ver o pacote completo e os bônus exclusivos.</p>
+          <div className="relative">
+            <div className="overflow-hidden">
+              <div
+                className="flex gap-4 transition-transform duration-300"
+                style={{ transform: `translateX(-${carouselIdx * (100 / visibleCount)}%)` }}
+              >
+                {CAROUSEL_ITEMS.map((item, i) => (
+                  <div key={i} className="min-w-[calc(25%-12px)] flex-shrink-0">
+                    <div className={`rounded-xl overflow-hidden border-2 ${i === 0 ? 'border-yellow-400' : 'border-gray-200'} bg-white shadow-sm`}>
+                      <img src={item.img} alt={item.label} className="w-full h-32 object-cover" />
+                      <p className="text-xs font-semibold text-center p-2 text-gray-700">{item.label}</p>
+                      <p className="text-xs text-center text-gray-400 pb-2">eBônus</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button onClick={prev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-50">
+              <ChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <button onClick={next} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-50">
+              <ChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-2">Tudo o que você precisa em um só lugar</h2>
+          <p className="text-center text-gray-500 mb-10 text-sm">Desenvolvemos o material com a mais alta qualidade para você e sua família.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {FEATURES.map((f, i) => (
+              <div key={i} className="bg-green-50 rounded-2xl p-5 text-center border border-green-100">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">{f.icon}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-1">{f.title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{f.desc}</p>
               </div>
             ))}
-          </div>
-          <div className="mt-8">
-            <CTAButton text="Quero Aproveitar o Desconto" />
           </div>
         </div>
       </section>
 
       {/* COMO FUNCIONA */}
-      <section className="py-14 px-4 bg-white">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-10">Como Funciona?</h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {STEPS.map((step, i) => (
-              <div key={i} className="flex flex-col items-center text-center bg-yellow-50 rounded-2xl p-6 border border-yellow-200">
-                <div className="w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center mb-4">
-                  <step.icon className="w-7 h-7 text-gray-900" />
-                </div>
-                <h3 className="font-bold text-gray-900 text-lg mb-2">{step.title}</h3>
-                <p className="text-gray-600 text-sm">{step.desc}</p>
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-1">Como Funciona?</h2>
+          <p className="text-center text-gray-500 mb-10 text-sm">É rápido, fácil e seguro.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {STEPS.map((s, i) => (
+              <div key={i} className="text-center">
+                <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-black text-xl mx-auto mb-3">{s.n}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-2">{s.title}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -126,30 +175,19 @@ export default function App() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section className="py-14 px-4 bg-gray-50">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-10">O que estão falando</h2>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {[1,2,3,4].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div className="flex gap-1 mb-3">
-                  {[1,2,3,4,5].map(s => <Star key={s} className="w-5 h-5 text-yellow-400 fill-yellow-400" />)}
-                </div>
-                <p className="text-gray-700 text-sm italic mb-4">
-                  {i === 1 && '"Incrível! Imprimi todas as figurinhas em casa e ficaram perfeitas. Meus filhos adoraram!"'}
-                  {i === 2 && '"Nunca pensei que fosse tão fácil. Chegou no e-mail na hora e já saí imprimindo!"'}
-                  {i === 3 && '"Economizei muito comparado com comprar nas bancas. Recomendo demais!"'}
-                  {i === 4 && '"As figurinhas douradas são incríveis! Qualidade surpreendente pelo preço."'}
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-bold">
-                    {['M','J','A','C'][i-1]}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm">{['Maria S.','João P.','Ana L.','Carlos R.'][i-1]}</p>
-                    <p className="text-gray-400 text-xs">Cliente verificado</p>
-                  </div>
-                </div>
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-black text-center text-gray-900 mb-2 uppercase">QUEM COMPROU, JÁ ESTÁ COMPLETANDO O ÁLBUM!!!</h2>
+          <p className="text-center text-gray-500 mb-8 text-sm">Veja os resultados de quem já imprimiu e completou seu álbum.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=400',
+              'https://images.pexels.com/photos/3621104/pexels-photo-3621104.jpeg?auto=compress&cs=tinysrgb&w=400',
+              'https://images.pexels.com/photos/46798/the-ball-stadion-football-the-pitch-46798.jpeg?auto=compress&cs=tinysrgb&w=400',
+              'https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg?auto=compress&cs=tinysrgb&w=400',
+            ].map((img, i) => (
+              <div key={i} className="rounded-xl overflow-hidden shadow-md border border-gray-100">
+                <img src={img} alt={`Depoimento ${i+1}`} className="w-full h-40 object-cover" />
               </div>
             ))}
           </div>
@@ -157,48 +195,47 @@ export default function App() {
       </section>
 
       {/* PRICING */}
-      <section className="py-14 px-4 bg-gradient-to-b from-yellow-400 to-yellow-300">
-        <div className="max-w-lg mx-auto text-center">
-          <p className="text-red-700 font-bold text-sm uppercase tracking-wider mb-2">⏰ Oferta por tempo limitado</p>
-          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-6">Garanta seu kit agora!</h2>
-          <div className="bg-white rounded-2xl p-8 shadow-xl mb-6">
-            <p className="text-gray-400 line-through text-lg mb-1">De R$ 97,00</p>
-            <p className="text-gray-600 text-base mb-1">Por apenas</p>
-            <p className="text-6xl font-black text-green-600 leading-none mb-1">
-              R$<span>9</span><span className="text-4xl">,90</span>
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-sm mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center">
+            <h2 className="text-xl font-black text-gray-900 mb-4">Pack Figurinhas 2026 Completo</h2>
+            <p className="text-gray-400 line-through text-sm mb-1">R$ 97,77</p>
+            <p className="text-5xl font-black text-gray-900 mb-5">
+              <span className="text-2xl">R$</span> 9,90
             </p>
-            <p className="text-gray-500 text-sm mb-6">Pagamento único — acesso vitalício</p>
-            <CTAButton />
-            <p className="text-xs text-gray-400 mt-3">🔒 Pagamento 100% seguro • Acesso imediato</p>
+            <ul className="text-left space-y-2 mb-6">
+              {KIT_LIST.map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <a
+              href={PAYMENT_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-full text-base transition-all active:scale-95 mb-3"
+            >
+              Quero Aproveitar o Desconto 🛒
+            </a>
+            <div className="flex items-center justify-center gap-1 text-xs text-gray-500">
+              <Shield className="w-4 h-4" /> 7 Dias de Garantia Incondicional
+            </div>
           </div>
-          <p className="text-gray-700 text-sm font-bold">
-            ⚽ Mais de 300 pessoas já aproveitaram essa oferta!
-          </p>
-        </div>
-      </section>
-
-      {/* GARANTIA */}
-      <section className="py-14 px-4 bg-white">
-        <div className="max-w-2xl mx-auto text-center">
-          <Shield className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-black text-gray-900 mb-3">Garantia de 7 dias</h2>
-          <p className="text-gray-600 text-base mb-6">
-            Se por qualquer motivo você não ficar satisfeito, devolvemos 100% do seu dinheiro em até 7 dias. Sem perguntas, sem burocracia.
-          </p>
-          <CTAButton text="Quero Aproveitar o Desconto" />
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-gray-900 text-gray-400 py-8 px-4 text-center text-xs">
-        <p className="mb-2">Este produto é digital. Após a compra você recebe acesso imediato por e-mail.</p>
-        <p>© 2026 — Todos os direitos reservados</p>
-        <div className="flex justify-center gap-4 mt-3">
-          <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
-          <a href="#" className="hover:text-white transition-colors">Política de Privacidade</a>
-          <a href="#" className="hover:text-white transition-colors">Contato</a>
+      <footer className="bg-white border-t border-gray-100 py-6 px-4 text-center text-xs text-gray-400">
+        <p className="mb-2">© 2026 Meu drive digital. Todos os direitos reservados.</p>
+        <div className="flex justify-center gap-4">
+          <a href="#" className="hover:text-gray-600">Termos de Uso</a>
+          <a href="#" className="hover:text-gray-600">Política de Privacidade</a>
+          <a href="#" className="hover:text-gray-600">Contato</a>
         </div>
       </footer>
+
     </div>
   );
 }
